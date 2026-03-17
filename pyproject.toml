@@ -10,6 +10,7 @@ dependencies = [
     "accelerate",
     "huggingface_hub",
     "vllm",
+    "autoawq>=0.1.7",
     "scikit-learn",
     "numpy",
     "plotly",
