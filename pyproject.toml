@@ -10,7 +10,7 @@ dependencies = [
     "accelerate",
     "huggingface_hub",
     "vllm",
-    "autoawq>=0.1.7",
+    "auto-gptq>=0.5.0",
     "scikit-learn",
     "numpy",
     "plotly",
@@ -28,7 +28,6 @@ dev = ["pytest>=7.0"]
 quantization = [
     "bitsandbytes>=0.41.0",
     "auto-gptq>=0.5.0",
-    "autoawq>=0.1.7",
 ]
 
 [build-system]

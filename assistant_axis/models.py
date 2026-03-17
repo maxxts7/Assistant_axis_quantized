@@ -40,7 +40,7 @@ MODEL_CONFIGS = {
         "capping_config": "llama-3.3-70b/capping_config.pt",
         "capping_experiment": "layers_56:72-p0.25",
     },
-    "Qwen/Qwen3-32B-AWQ": {
+    "JunHowie/Qwen3-32B-GPTQ-Int4": {
         "target_layer": 32,
         "total_layers": 64,
         "short_name": "Qwen",
