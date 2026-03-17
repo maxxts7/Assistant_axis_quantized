@@ -13,7 +13,7 @@
 MODEL="${MODEL:-QuantTrio/Qwen3.5-27B-AWQ}"
 QUANTIZATION="${QUANTIZATION:-awq}"       # "", "gptq", "awq", "bnb-4bit", "bnb-8bit"
 DTYPE="${DTYPE:-half}"                    # "auto", "half", "bfloat16", "float16"
-TP_SIZE="${TP_SIZE:-2}"
+TP_SIZE="${TP_SIZE:-}"
 GPU_MEM_UTIL="${GPU_MEM_UTIL:-0.85}"
 
 # ── Paths ────────────────────────────────────────────────────────────────────
