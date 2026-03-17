@@ -34,7 +34,7 @@ uv run "$PROJECT_DIR/pipeline/2_activations.py" \
     --layers "$LAYERS" \
     --roles $ROLES \
     $(build_tp_arg) \
-    $(build_quant_args)
+    $(build_quant_arg)
 
 echo ""
 echo "Done! Extracted activation files:"

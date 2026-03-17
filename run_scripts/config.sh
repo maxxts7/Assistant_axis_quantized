@@ -89,6 +89,7 @@ build_tp_arg() {
 }
 
 build_quant_args() {
+    # Quantization args for vLLM scripts (generation) — includes --dtype
     local args=""
     if [ -n "$QUANTIZATION" ]; then
         args="--quantization $QUANTIZATION"
@@ -97,6 +98,16 @@ build_quant_args() {
         args="$args --dtype $DTYPE"
     fi
     echo "$args"
+}
+
+build_quant_arg() {
+    # Quantization arg for HuggingFace scripts (activations) — no --dtype
+    # awq_marlin is vLLM-only; HuggingFace sees it as plain awq
+    if [ -n "$QUANTIZATION" ]; then
+        local q="$QUANTIZATION"
+        [ "$q" = "awq_marlin" ] && q="awq"
+        echo "--quantization $q"
+    fi
 }
 
 # ── Print current config ────────────────────────────────────────────────────
