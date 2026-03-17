@@ -18,6 +18,8 @@ Example:
 import torch
 from typing import Sequence, Union, Iterable, List
 
+from .quantization import get_compute_dtype
+
 
 class ActivationSteering:
     """
@@ -133,7 +135,8 @@ class ActivationSteering:
 
     def _normalize_vectors(self, steering_vectors):
         """Convert steering vectors to a list of tensors on the correct device/dtype."""
-        p = next(self.model.parameters())
+        compute_dtype = get_compute_dtype(self.model)
+        target_device = next(self.model.parameters()).device
 
         if torch.is_tensor(steering_vectors):
             if steering_vectors.ndim == 1:
@@ -149,7 +152,7 @@ class ActivationSteering:
         hidden_size = getattr(self.model.config, "hidden_size", None)
 
         for i, vec in enumerate(vectors):
-            tensor_vec = torch.as_tensor(vec, dtype=p.dtype, device=p.device)
+            tensor_vec = torch.as_tensor(vec, dtype=compute_dtype, device=target_device)
             if tensor_vec.ndim != 1:
                 raise ValueError(f"Steering vector {i} must be 1-D, got shape {tensor_vec.shape}")
             if hidden_size and tensor_vec.numel() != hidden_size:
@@ -174,7 +177,8 @@ class ActivationSteering:
 
     def _normalize_mean_activations(self, mean_activations):
         """Convert mean activations to a list of tensors on the correct device/dtype."""
-        p = next(self.model.parameters())
+        compute_dtype = get_compute_dtype(self.model)
+        target_device = next(self.model.parameters()).device
 
         if torch.is_tensor(mean_activations):
             if mean_activations.ndim == 1:
@@ -190,7 +194,7 @@ class ActivationSteering:
         hidden_size = getattr(self.model.config, "hidden_size", None)
 
         for i, vec in enumerate(vectors):
-            tensor_vec = torch.as_tensor(vec, dtype=p.dtype, device=p.device)
+            tensor_vec = torch.as_tensor(vec, dtype=compute_dtype, device=target_device)
             if tensor_vec.ndim != 1:
                 raise ValueError(f"Mean activation {i} must be 1-D, got shape {tensor_vec.shape}")
             if hidden_size and tensor_vec.numel() != hidden_size:

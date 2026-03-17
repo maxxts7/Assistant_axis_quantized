@@ -350,9 +350,10 @@ class ActivationExtractor:
             layer_outputs[i].to(target_device) for i in layer_list
         ])  # (num_layers, batch_size, seq_len, hidden_size)
 
-        # Ensure consistent bf16 dtype
-        if selected_activations.dtype != torch.bfloat16:
-            selected_activations = selected_activations.to(torch.bfloat16)
+        # Ensure consistent dtype matching the model's compute dtype
+        target_dtype = self.probing_model.compute_dtype
+        if selected_activations.dtype != target_dtype:
+            selected_activations = selected_activations.to(target_dtype)
 
         batch_metadata = {
             'conversation_lengths': span_metadata['conversation_lengths'],

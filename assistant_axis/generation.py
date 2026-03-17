@@ -140,6 +140,9 @@ class VLLMGenerator:
     Example:
         generator = VLLMGenerator("google/gemma-2-27b-it")
         responses = generator.generate_batch(conversations)
+
+        # With quantization
+        generator = VLLMGenerator("TheBloke/Qwen3-32B-GPTQ", quantization="gptq")
     """
 
     def __init__(
@@ -151,6 +154,8 @@ class VLLMGenerator:
         temperature: float = 0.7,
         max_tokens: int = 512,
         top_p: float = 0.9,
+        quantization: Optional[str] = None,
+        dtype: str = "auto",
     ):
         """
         Initialize vLLM generator.
@@ -163,6 +168,8 @@ class VLLMGenerator:
             temperature: Sampling temperature
             max_tokens: Maximum tokens to generate
             top_p: Top-p sampling
+            quantization: Quantization method - "gptq", "awq", "bnb-4bit", "bnb-8bit", or None
+            dtype: Model dtype for vLLM - "auto", "half", "bfloat16", "float16"
         """
         self.model_name = model_name
         self.max_model_len = max_model_len
@@ -171,6 +178,8 @@ class VLLMGenerator:
         self.temperature = temperature
         self.max_tokens = max_tokens
         self.top_p = top_p
+        self.quantization = quantization
+        self.dtype_str = dtype
 
         self.llm = None
         self.sampling_params = None
@@ -181,8 +190,11 @@ class VLLMGenerator:
             return
 
         from vllm import LLM, SamplingParams
+        from .quantization import resolve_for_vllm
 
         logger.info(f"Loading vLLM model: {self.model_name}")
+
+        quant_kwargs = resolve_for_vllm(self.quantization)
 
         self.llm = LLM(
             model=self.model_name,
@@ -190,6 +202,8 @@ class VLLMGenerator:
             tensor_parallel_size=self.tensor_parallel_size,
             gpu_memory_utilization=self.gpu_memory_utilization,
             trust_remote_code=True,
+            dtype=self.dtype_str,
+            **quant_kwargs,
         )
 
         self.sampling_params = SamplingParams(
@@ -331,6 +345,8 @@ class RoleResponseGenerator:
         top_p: float = 0.9,
         prompt_indices: Optional[List[int]] = None,
         short_name: Optional[str] = None,
+        quantization: Optional[str] = None,
+        dtype: str = "auto",
     ):
         """
         Initialize role response generator.
@@ -349,6 +365,8 @@ class RoleResponseGenerator:
             top_p: Top-p sampling
             prompt_indices: Which prompt indices to use (default: 0-4)
             short_name: Short model name for formatting (auto-detected if None)
+            quantization: Quantization method - "gptq", "awq", "bnb-4bit", "bnb-8bit", or None
+            dtype: Model dtype for vLLM - "auto", "half", "bfloat16", "float16"
         """
         self.model_name = model_name
         self.roles_dir = Path(roles_dir)
@@ -373,6 +391,8 @@ class RoleResponseGenerator:
             temperature=temperature,
             max_tokens=max_tokens,
             top_p=top_p,
+            quantization=quantization,
+            dtype=dtype,
         )
 
         self.questions = None

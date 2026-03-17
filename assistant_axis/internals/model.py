@@ -7,6 +7,8 @@ import torch
 import torch.nn as nn
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
+from ..quantization import resolve_for_hf, get_compute_dtype
+
 
 class ProbingModel:
     """
@@ -23,6 +25,7 @@ class ProbingModel:
         max_memory_per_gpu: Optional[Dict[int, str]] = None,
         chat_model_name: Optional[str] = None,
         dtype: torch.dtype = torch.bfloat16,
+        quantization: Optional[str] = None,
     ):
         """
         Initialize and load a HuggingFace model and tokenizer.
@@ -36,10 +39,12 @@ class ProbingModel:
             max_memory_per_gpu: Optional dict mapping GPU ids to max memory (e.g. {0: "40GiB", 1: "40GiB"})
             chat_model_name: Optional HuggingFace model identifier for tokenizer (if different from base model)
             dtype: Data type for model weights (default: torch.bfloat16)
+            quantization: Quantization method - "gptq", "awq", "bnb-4bit", "bnb-8bit", or None
         """
         self.model_name = model_name
         self.chat_model_name = chat_model_name
         self.dtype = dtype
+        self.quantization = quantization
 
         # Load tokenizer from chat_model_name if provided, otherwise from model_name
         tokenizer_source = chat_model_name if chat_model_name else model_name
@@ -51,9 +56,12 @@ class ProbingModel:
         self.tokenizer.padding_side = "left"
 
         # Build model loading kwargs
-        model_kwargs = {
-            "dtype": dtype,
-        }
+        quant_kwargs = resolve_for_hf(quantization)
+        if quant_kwargs:
+            # Quantization config controls dtype — don't pass both
+            model_kwargs = quant_kwargs
+        else:
+            model_kwargs = {"dtype": dtype}
 
         if max_memory_per_gpu is not None:
             # Use custom memory limits (for multi-worker setups)
@@ -108,7 +116,15 @@ class ProbingModel:
         instance.tokenizer = tokenizer
         instance.model_name = model_name or getattr(model, 'name_or_path', 'Unknown')
         instance.chat_model_name = None
-        instance.dtype = next(model.parameters()).dtype if hasattr(model, 'parameters') else torch.bfloat16
+        instance.quantization = None
+        # Find a floating-point param dtype (skip quantized int weights)
+        param_dtype = torch.bfloat16
+        if hasattr(model, 'parameters'):
+            for p in model.parameters():
+                if p.dtype.is_floating_point:
+                    param_dtype = p.dtype
+                    break
+        instance.dtype = param_dtype
         instance._layers = None
         instance._model_type = None
         return instance
@@ -117,6 +133,11 @@ class ProbingModel:
     def hidden_size(self) -> int:
         """Get the hidden size of the model."""
         return self.model.config.hidden_size
+
+    @property
+    def compute_dtype(self) -> torch.dtype:
+        """Get the compute dtype (activation dtype) — always a float type."""
+        return get_compute_dtype(self.model)
 
     @property
     def device(self) -> torch.device:

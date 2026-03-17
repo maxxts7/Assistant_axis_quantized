@@ -44,6 +44,12 @@ from .steering import (
     load_capping_config,
     build_capping_steerer,
 )
+from .quantization import (
+    get_compute_dtype,
+    resolve_for_hf,
+    resolve_for_vllm,
+    VALID_METHODS,
+)
 from .pca import (
     compute_pca,
     plot_variance_explained,
@@ -76,6 +82,11 @@ __all__ = [
     "create_mean_ablation_steerer",
     "load_capping_config",
     "build_capping_steerer",
+    # Quantization
+    "get_compute_dtype",
+    "resolve_for_hf",
+    "resolve_for_vllm",
+    "VALID_METHODS",
     # PCA
     "compute_pca",
     "plot_variance_explained",
