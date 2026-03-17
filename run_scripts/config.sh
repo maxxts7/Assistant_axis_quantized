@@ -49,6 +49,9 @@ PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 
 # ── Common Setup Function ───────────────────────────────────────────────────
 setup_environment() {
+    # Ensure uv is on PATH (needed after fresh install)
+    [ -f "$HOME/.local/bin/env" ] && source "$HOME/.local/bin/env"
+
     # Install uv if not present
     if ! command -v uv &> /dev/null; then
         echo "Installing uv..."
