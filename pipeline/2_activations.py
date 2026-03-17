@@ -343,7 +343,7 @@ def main():
     parser.add_argument("--thinking", type=lambda x: x.lower() in ['true', '1', 'yes'], default=False,
                        help="Enable thinking mode for Qwen models (default: False)")
     parser.add_argument("--quantization", type=str, default=None,
-                       choices=['gptq', 'awq', 'bnb-4bit', 'bnb-8bit'],
+                       choices=['gptq', 'awq', 'awq_marlin', 'bnb-4bit', 'bnb-8bit'],
                        help="Quantization method for model loading")
     args = parser.parse_args()
 

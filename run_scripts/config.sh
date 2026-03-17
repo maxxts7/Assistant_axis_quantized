@@ -11,7 +11,7 @@
 # Change these to switch models. Every script picks them up automatically.
 
 MODEL="${MODEL:-Qwen/Qwen3-32B-AWQ}"
-QUANTIZATION="${QUANTIZATION:-awq}"       # "", "gptq", "awq", "bnb-4bit", "bnb-8bit"
+QUANTIZATION="${QUANTIZATION:-awq_marlin}" # "", "gptq", "awq", "awq_marlin", "bnb-4bit", "bnb-8bit"
 DTYPE="${DTYPE:-half}"                    # "auto", "half", "bfloat16", "float16"
 TP_SIZE="${TP_SIZE:-}"
 GPU_MEM_UTIL="${GPU_MEM_UTIL:-0.85}"

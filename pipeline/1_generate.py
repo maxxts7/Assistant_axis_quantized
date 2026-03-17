@@ -237,7 +237,7 @@ def main():
     parser.add_argument('--top_p', type=float, default=0.9, help='Top-p sampling')
     parser.add_argument('--roles', nargs='+', help='Specific roles to process')
     parser.add_argument('--quantization', type=str, default=None,
-                        choices=['gptq', 'awq', 'bnb-4bit', 'bnb-8bit'],
+                        choices=['gptq', 'awq', 'awq_marlin', 'bnb-4bit', 'bnb-8bit'],
                         help='Quantization method for vLLM')
     parser.add_argument('--dtype', type=str, default='auto',
                         help='Model dtype for vLLM (auto, half, bfloat16, float16)')

@@ -34,6 +34,7 @@ from typing import Optional
 _VLLM_METHODS = {
     "gptq": "gptq",
     "awq": "awq",
+    "awq_marlin": "awq_marlin",
     "bnb-4bit": "bitsandbytes",
     "bnb-8bit": "bitsandbytes",
 }
@@ -95,7 +96,7 @@ def resolve_for_hf(quantization: Optional[str]) -> dict:
     if not quantization:
         return {}
 
-    if quantization in ("gptq", "awq"):
+    if quantization in ("gptq", "awq", "awq_marlin"):
         # Auto-detected from model config on Hub — no explicit config needed
         return {}
 
