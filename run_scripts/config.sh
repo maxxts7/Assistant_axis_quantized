@@ -10,7 +10,7 @@
 # ── Model Configuration ─────────────────────────────────────────────────────
 # Change these to switch models. Every script picks them up automatically.
 
-MODEL="${MODEL:-QuantTrio/Qwen3.5-27B-AWQ}"
+MODEL="${MODEL:-Qwen/Qwen3-32B-AWQ}"
 QUANTIZATION="${QUANTIZATION:-awq}"       # "", "gptq", "awq", "bnb-4bit", "bnb-8bit"
 DTYPE="${DTYPE:-half}"                    # "auto", "half", "bfloat16", "float16"
 TP_SIZE="${TP_SIZE:-}"

@@ -40,7 +40,7 @@ MODEL_CONFIGS = {
         "capping_config": "llama-3.3-70b/capping_config.pt",
         "capping_experiment": "layers_56:72-p0.25",
     },
-    "QuantTrio/Qwen3.5-27B-AWQ": {
+    "Qwen/Qwen3-32B-AWQ": {
         "target_layer": 32,
         "total_layers": 64,
         "short_name": "Qwen",
